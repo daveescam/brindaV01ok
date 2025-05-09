@@ -1,0 +1,42 @@
+// Basic emotional types for the Brinda X system
+
+export type CoreEmotion =
+  | "joy"
+  | "sadness"
+  | "anger"
+  | "fear"
+  | "disgust"
+  | "surprise"
+  | "trust"
+  | "anticipation"
+  | "nostalgia"
+  | "melancholy"
+  | "euphoria"
+  | "anxiety"
+  | "despecho" // heartbreak/spite
+  | "vulnerability"
+  | "catharsis"
+  | "cringe"
+  | "schadenfreude"
+  | "confusion"
+  | "awe"
+  | "embarrassment"
+
+export type EmotionalIntensity = "very_low" | "low" | "medium" | "high" | "very_high" | "extreme"
+
+export type VisualStyle =
+  | "minimalist"
+  | "vibrant"
+  | "dark"
+  | "neon"
+  | "retro"
+  | "surreal"
+  | "telenovela"
+  | "meme"
+  | "vintage"
+  | "cyberpunk"
+  | "vaporwave"
+  | "loteria"
+  | "comic"
+  | "glitch"
+  | "polaroid"
