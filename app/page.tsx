@@ -50,7 +50,7 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button asChild size="lg" className="bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90">
-              <Link href="/cards">Explorar Cápsulas</Link>
+              <Link href="/capsules">Explorar Cápsulas</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-pink-500 text-white hover:bg-pink-500/20">
               <Link href="/generator">Crear Cartas</Link>
