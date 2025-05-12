@@ -1,146 +1,185 @@
 "use client"
 
 import { useState } from "react"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Heart, MessageCircle, Bookmark, Send, ImageIcon, User, MoreHorizontal } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal, Smile } from "lucide-react"
+import { motion } from "framer-motion"
 
 interface InstagramDespechadoProps {
-  prompt?: string
-  demoMode?: boolean
+  caption?: string
+  comments?: { user: string; text: string; avatar?: string }[]
+  imageUrl?: string
+  userName?: string
+  userAvatar?: string
+  onAddComment?: (comment: string) => void
 }
 
 export function InstagramDespechado({
-  prompt = "Comparte tu historia de despecho",
-  demoMode = false,
+  caption = "Cuando bloqueas a alguien... y el algoritmo te lo sigue recomendando 😭 #DespechoTecnológico",
+  comments = [
+    { user: "terapia_urgente", text: "¿Y la terapia? 👀", avatar: "/placeholder.svg?height=32&width=32&text=T" },
+    {
+      user: "ex_detectado",
+      text: "Mi psicólogo me dijo que deje de seguirte, pero aquí estoy 🤡",
+      avatar: "/placeholder.svg?height=32&width=32&text=E",
+    },
+  ],
+  imageUrl = "/placeholder.svg?height=500&width=500&text=Imagen+Despechada",
+  userName = "corazon_roto_oficial",
+  userAvatar = "/placeholder.svg?height=40&width=40&text=CR",
+  onAddComment,
 }: InstagramDespechadoProps) {
-  const [caption, setCaption] = useState("")
-  const [username, setUsername] = useState("usuario_despechado")
-  const [likes, setLikes] = useState(0)
-  const [isLiked, setIsLiked] = useState(false)
-  const [isSaved, setIsSaved] = useState(false)
-  const [imageSelected, setImageSelected] = useState(false)
-  const [isPublished, setIsPublished] = useState(false)
+  const [liked, setLiked] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [likeCount, setLikeCount] = useState(152)
+  const [newComment, setNewComment] = useState("")
+  const [allComments, setAllComments] = useState(comments)
 
   const handleLike = () => {
-    if (isLiked) {
-      setLikes(likes - 1)
-    } else {
-      setLikes(likes + 1)
-    }
-    setIsLiked(!isLiked)
+    setLiked(!liked)
+    setLikeCount(liked ? likeCount - 1 : likeCount + 1)
   }
 
   const handleSave = () => {
-    setIsSaved(!isSaved)
+    setSaved(!saved)
   }
 
-  const handleSelectImage = () => {
-    setImageSelected(true)
-  }
+  const handleAddComment = () => {
+    if (!newComment.trim()) return
 
-  const handlePublish = () => {
-    if (demoMode) {
-      // En modo demo, simular likes aleatorios
-      setLikes(Math.floor(Math.random() * 50) + 10)
+    const comment = {
+      user: "tu_usuario",
+      text: newComment,
+      avatar: "/placeholder.svg?height=32&width=32&text=TU",
     }
-    setIsPublished(true)
+
+    setAllComments([...allComments, comment])
+    setNewComment("")
+
+    if (onAddComment) {
+      onAddComment(newComment)
+    }
   }
 
   return (
-    <div className="flex flex-col bg-black rounded-lg overflow-hidden border border-gray-800">
-      {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b border-gray-800">
-        <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-500 to-pink-600 flex items-center justify-center">
-            <User className="h-4 w-4 text-white" />
-          </div>
-          <div className="ml-2">
-            <span className="text-white text-sm font-medium">{username}</span>
-          </div>
+    <Card className="w-full max-w-md mx-auto overflow-hidden border shadow-md">
+      {/* Post header */}
+      <div className="p-3 flex items-center justify-between border-b">
+        <div className="flex items-center gap-2">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={userAvatar || "/placeholder.svg"} alt={userName} />
+            <AvatarFallback>{userName[0]}</AvatarFallback>
+          </Avatar>
+          <span className="font-medium text-sm">{userName}</span>
         </div>
-        <MoreHorizontal className="h-5 w-5 text-white/70" />
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <MoreHorizontal className="h-5 w-5" />
+        </Button>
       </div>
 
-      {/* Image Area */}
-      <div className="aspect-square bg-gray-900 flex items-center justify-center">
-        {!imageSelected ? (
-          <div className="text-center">
-            <ImageIcon className="h-12 w-12 text-gray-600 mx-auto mb-2" />
-            <Button onClick={handleSelectImage} variant="outline" className="border-gray-700 text-white">
-              Seleccionar Imagen
-            </Button>
-          </div>
-        ) : (
-          <div className="w-full h-full bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center">
-            {isPublished ? (
-              <div className="text-center p-6">
-                <p className="text-white/90 text-lg italic">"{caption}"</p>
-                <p className="text-white/50 text-sm mt-2">- {username}</p>
-              </div>
-            ) : (
-              <div className="text-white/50 text-sm">Vista previa de imagen</div>
-            )}
-          </div>
+      {/* Post image */}
+      <div className="relative">
+        <img src={imageUrl || "/placeholder.svg"} alt="Post" className="w-full aspect-square object-cover" />
+        {liked && (
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          >
+            <Heart className="h-20 w-20 text-red-500 fill-red-500" />
+          </motion.div>
         )}
       </div>
 
-      {/* Action Bar */}
-      {isPublished ? (
-        <div className="p-3 border-t border-gray-800">
-          <div className="flex justify-between mb-2">
-            <div className="flex space-x-4">
-              <button onClick={handleLike} className="focus:outline-none">
-                <Heart className={`h-6 w-6 ${isLiked ? "text-red-500 fill-red-500" : "text-white"}`} />
-              </button>
-              <button className="focus:outline-none">
-                <MessageCircle className="h-6 w-6 text-white" />
-              </button>
-              <button className="focus:outline-none">
-                <Send className="h-6 w-6 text-white" />
-              </button>
-            </div>
-            <button onClick={handleSave} className="focus:outline-none">
-              <Bookmark className={`h-6 w-6 ${isSaved ? "text-white fill-white" : "text-white"}`} />
-            </button>
-          </div>
-          <div className="text-white text-sm font-medium">{likes} Me gusta</div>
-          <div className="mt-1">
-            <span className="text-white text-sm font-medium">{username}</span>
-            <span className="text-white/90 text-sm ml-2">{caption}</span>
-          </div>
-          <div className="mt-1 text-gray-500 text-xs">Hace 1 minuto</div>
-        </div>
-      ) : (
-        <div className="p-3 border-t border-gray-800">
-          <div className="mb-3">
-            <p className="text-white/70 text-sm mb-2">{prompt}</p>
-            <Textarea
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-              placeholder="Escribe tu historia de despecho..."
-              className="bg-gray-900 border-gray-700 text-white resize-none"
-              rows={4}
-            />
-          </div>
-          <div className="mb-3">
-            <Input
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Nombre de usuario"
-              className="bg-gray-900 border-gray-700 text-white"
-            />
+      {/* Post actions */}
+      <CardContent className="p-3">
+        <div className="flex justify-between mb-2">
+          <div className="flex gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9"
+              onClick={handleLike}
+              aria-label={liked ? "Unlike" : "Like"}
+            >
+              <Heart className={`h-6 w-6 ${liked ? "fill-red-500 text-red-500" : ""}`} />
+            </Button>
+            <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Comment">
+              <MessageCircle className="h-6 w-6" />
+            </Button>
+            <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Share">
+              <Send className="h-6 w-6" />
+            </Button>
           </div>
           <Button
-            onClick={handlePublish}
-            className="w-full bg-gradient-to-r from-yellow-500 to-pink-600 hover:opacity-90"
-            disabled={!caption.trim() || !imageSelected}
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9"
+            onClick={handleSave}
+            aria-label={saved ? "Unsave" : "Save"}
+          >
+            <Bookmark className={`h-6 w-6 ${saved ? "fill-black" : ""}`} />
+          </Button>
+        </div>
+
+        <div className="mb-1">
+          <p className="font-medium text-sm">{likeCount} likes</p>
+          <p className="text-xs text-gray-500">Tu ex y 15 fantasmas más dieron like</p>
+        </div>
+
+        <div className="mb-2">
+          <p className="text-sm">
+            <span className="font-medium">{userName}</span> {caption}
+          </p>
+        </div>
+
+        <div className="space-y-1 max-h-24 overflow-y-auto">
+          {allComments.map((comment, index) => (
+            <div key={index} className="flex gap-2 items-start">
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={comment.avatar || "/placeholder.svg"} alt={comment.user} />
+                <AvatarFallback>{comment.user[0]}</AvatarFallback>
+              </Avatar>
+              <p className="text-sm">
+                <span className="font-medium">{comment.user}</span> {comment.text}
+              </p>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+
+      <CardFooter className="p-3 pt-0">
+        <div className="flex items-center gap-2 w-full">
+          <Avatar className="h-7 w-7">
+            <AvatarImage src="/placeholder.svg?height=32&width=32&text=TU" alt="Tu usuario" />
+            <AvatarFallback>TU</AvatarFallback>
+          </Avatar>
+          <Input
+            placeholder="Añade un comentario..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleAddComment()}
+            className="flex-1 h-9 text-sm"
+          />
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400" aria-label="Emoji">
+            <Smile className="h-5 w-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleAddComment}
+            disabled={!newComment.trim()}
+            className="text-blue-500 font-medium"
           >
             Publicar
           </Button>
         </div>
-      )}
-    </div>
+      </CardFooter>
+    </Card>
   )
 }

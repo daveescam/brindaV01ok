@@ -1,141 +1,145 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Send, User, Bot } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Send, Paperclip, Mic, ImageIcon, MoreVertical, Check, CheckCheck } from "lucide-react"
+import { motion } from "framer-motion"
 
 interface ChatToxicoProps {
   initialMessage?: string
-  demoMode?: boolean
+  aiResponse?: string
+  onSendMessage?: (message: string) => void
+  userAvatar?: string
+  exAvatar?: string
+  userName?: string
+  exName?: string
 }
 
-export function ChatToxico({ initialMessage = "Hola, ¿qué pasa?", demoMode = false }: ChatToxicoProps) {
+export function ChatToxico({
+  initialMessage = "¿Por qué me dejaste en visto?",
+  aiResponse = "Porque tu perfil es un museo del cringe. 🚮",
+  onSendMessage,
+  userAvatar = "/placeholder.svg?height=40&width=40",
+  exAvatar = "/placeholder.svg?height=40&width=40&text=Ex",
+  userName = "Tú",
+  exName = "Ex Tóxico",
+}: ChatToxicoProps) {
   const [messages, setMessages] = useState([
-    {
-      role: "bot",
-      content: initialMessage,
-    },
+    { id: 1, text: initialMessage, sender: "user", time: "22:45", status: "read" },
+    { id: 2, text: aiResponse, sender: "ex", time: "22:47", status: "sent" },
   ])
-  const [input, setInput] = useState("")
-  const [isTyping, setIsTyping] = useState(false)
+  const [newMessage, setNewMessage] = useState("")
 
   const handleSendMessage = () => {
-    if (!input.trim()) return
+    if (!newMessage.trim()) return
 
-    // Añadir mensaje del usuario
-    const newMessages = [...messages, { role: "user", content: input }]
-    setMessages(newMessages)
-    setInput("")
-    setIsTyping(true)
+    const newMsg = {
+      id: messages.length + 1,
+      text: newMessage,
+      sender: "user",
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      status: "sent",
+    }
 
-    // Simular respuesta en modo demo
-    if (demoMode) {
-      setTimeout(() => {
-        let response = ""
+    setMessages([...messages, newMsg])
+    setNewMessage("")
 
-        // Respuestas predefinidas para el modo demo
-        if (newMessages.length === 2) {
-          response = "Jajaja, ¿en serio? Cuéntame más detalles, esto se pone interesante... 🍿"
-        } else if (newMessages.length === 4) {
-          response = "Nooooo, ¡qué vergüenza! 😂 Pero tranqui, a todos nos ha pasado algo así. ¿Y qué hiciste después?"
-        } else {
-          response =
-            "Wow, esa historia merece entrar al salón de la fama de las borracheras épicas. ¡Tienes que contarla en el bar!"
-        }
-
-        setMessages([...newMessages, { role: "bot", content: response }])
-        setIsTyping(false)
-      }, 1500)
+    if (onSendMessage) {
+      onSendMessage(newMessage)
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSendMessage()
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "sent":
+        return <Check className="h-3 w-3 text-gray-400" />
+      case "delivered":
+        return <Check className="h-3 w-3 text-gray-400" />
+      case "read":
+        return <CheckCheck className="h-3 w-3 text-blue-500" />
+      default:
+        return null
     }
   }
 
   return (
-    <div className="flex flex-col h-[400px] bg-gray-900 rounded-lg overflow-hidden">
-      <div className="bg-gray-800 p-3 border-b border-gray-700">
-        <div className="flex items-center">
-          <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
-          <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
-          <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-          <span className="text-white/80 text-sm ml-2">Chat Tóxico™</span>
+    <Card className="w-full max-w-md mx-auto overflow-hidden border-0 shadow-lg">
+      {/* Chat header */}
+      <div className="bg-gradient-to-r from-purple-600 to-pink-500 p-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Avatar>
+            <AvatarImage src={exAvatar || "/placeholder.svg"} alt={exName} />
+            <AvatarFallback className="bg-pink-300 text-pink-800">{exName[0]}</AvatarFallback>
+          </Avatar>
+          <div>
+            <h3 className="font-medium text-white">{exName}</h3>
+            <p className="text-xs text-white/70">Última conexión: En tu mente</p>
+          </div>
         </div>
+        <Button variant="ghost" size="icon" className="text-white">
+          <MoreVertical className="h-5 w-5" />
+        </Button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message, index) => (
-          <div key={index} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-            <div
-              className={`max-w-[80%] rounded-lg p-3 ${
-                message.role === "user" ? "bg-pink-500/80 text-white" : "bg-gray-700 text-white/90"
-              }`}
+      {/* Chat messages */}
+      <CardContent className="p-0">
+        <div className="bg-[url('/placeholder.svg?height=500&width=500&text=Chat+Background')] bg-cover bg-center min-h-[350px] p-4 flex flex-col gap-3">
+          {messages.map((message) => (
+            <motion.div
+              key={message.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
             >
-              <div className="flex items-center mb-1">
-                {message.role === "user" ? (
-                  <>
-                    <span className="text-xs font-medium">Tú</span>
-                    <User className="h-3 w-3 ml-1" />
-                  </>
-                ) : (
-                  <>
-                    <Bot className="h-3 w-3 mr-1" />
-                    <span className="text-xs font-medium">Chat Tóxico</span>
-                  </>
-                )}
+              <div
+                className={`max-w-[80%] p-3 rounded-2xl ${
+                  message.sender === "user"
+                    ? "bg-purple-100 text-purple-900 rounded-tr-none"
+                    : "bg-white text-gray-800 rounded-tl-none"
+                }`}
+              >
+                <p className="break-words">{message.text}</p>
+                <div className="flex justify-end items-center gap-1 mt-1">
+                  <span className="text-xs text-gray-500">{message.time}</span>
+                  {message.sender === "user" && getStatusIcon(message.status)}
+                </div>
               </div>
-              <p className="text-sm">{message.content}</p>
-            </div>
-          </div>
-        ))}
+            </motion.div>
+          ))}
+        </div>
 
-        {isTyping && (
-          <div className="flex justify-start">
-            <div className="bg-gray-700 rounded-lg p-3 max-w-[80%]">
-              <div className="flex items-center mb-1">
-                <Bot className="h-3 w-3 mr-1" />
-                <span className="text-xs font-medium text-white/90">Chat Tóxico</span>
-              </div>
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                <div
-                  className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-                  style={{ animationDelay: "0.2s" }}
-                ></div>
-                <div
-                  className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-                  style={{ animationDelay: "0.4s" }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="p-3 border-t border-gray-700">
-        <div className="flex">
+        {/* Input area */}
+        <div className="p-2 bg-gray-50 border-t flex items-center gap-2">
+          <Button variant="ghost" size="icon" className="text-gray-500">
+            <Paperclip className="h-5 w-5" />
+          </Button>
           <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Escribe tu mensaje..."
-            className="bg-gray-800 border-gray-700 text-white"
+            placeholder="Escribe un mensaje..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+            className="flex-1"
           />
+          <Button variant="ghost" size="icon" className="text-gray-500">
+            <ImageIcon className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-gray-500">
+            <Mic className="h-5 w-5" />
+          </Button>
           <Button
             onClick={handleSendMessage}
-            className="ml-2 bg-pink-500 hover:bg-pink-600"
-            disabled={!input.trim() || isTyping}
+            disabled={!newMessage.trim()}
+            size="icon"
+            className="bg-pink-500 hover:bg-pink-600 text-white"
           >
-            <Send className="h-4 w-4" />
+            <Send className="h-5 w-5" />
           </Button>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }

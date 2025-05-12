@@ -116,10 +116,6 @@ export default function BorrachosDijeron() {
                   <h4 className="font-bold text-white mb-1">🧻 EL DESPERTAR</h4>
                   <p className="text-sm text-white/70">"El que despertó en casa ajena con una toalla de Pikachu"</p>
                 </div>
-                <div className="p-4 bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-lg border border-pink-500/30">
-                  <h4 className="font-bold text-white mb-1">🤡 La Promesa Falsa /h4>
-                  <p className="text-sm text-white/70">"El que siempre va armar un biz con sus amigos"</p>
-                </div>
               </div>
             </CardContent>
           </Card>

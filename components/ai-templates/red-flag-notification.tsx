@@ -4,74 +4,101 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Slider } from "@/components/ui/slider"
-import { AlertTriangle, Bell, Share2 } from "lucide-react"
+import { AlertTriangle, Share2, Download } from "lucide-react"
 
 interface RedFlagNotificationProps {
   prompt?: string
   demoMode?: boolean
+  onChallengeComplete?: (text: string, level: number) => void
 }
 
-export function RedFlagNotification({ prompt = "Comparte una red flag", demoMode = false }: RedFlagNotificationProps) {
+export function RedFlagNotification({
+  prompt = "¿Cuál fue la red flag más grande que ignoraste?",
+  demoMode = false,
+  onChallengeComplete,
+}: RedFlagNotificationProps) {
   const [redFlagText, setRedFlagText] = useState("")
-  const [toxicityLevel, setToxicityLevel] = useState([50])
+  const [toxicityLevel, setToxicityLevel] = useState(3)
   const [isGenerated, setIsGenerated] = useState(false)
 
-  const handleGenerateRedFlag = () => {
+  const handleToxicityChange = (value: number[]) => {
+    setToxicityLevel(value[0])
+  }
+
+  const handleGenerate = () => {
+    if (!redFlagText.trim()) return
+
     setIsGenerated(true)
+
+    if (onChallengeComplete) {
+      onChallengeComplete(redFlagText, toxicityLevel)
+    }
   }
 
   const getToxicityLabel = () => {
-    const level = toxicityLevel[0]
-    if (level < 25) return "Leve"
-    if (level < 50) return "Moderada"
-    if (level < 75) return "Alta"
+    if (toxicityLevel <= 1) return "Leve"
+    if (toxicityLevel <= 3) return "Moderada"
+    if (toxicityLevel <= 4) return "Alta"
     return "Extrema"
   }
 
   const getToxicityColor = () => {
-    const level = toxicityLevel[0]
-    if (level < 25) return "yellow"
-    if (level < 50) return "orange"
-    if (level < 75) return "red"
-    return "purple"
+    if (toxicityLevel <= 1) return "text-yellow-500"
+    if (toxicityLevel <= 3) return "text-orange-500"
+    if (toxicityLevel <= 4) return "text-red-500"
+    return "text-purple-500"
   }
 
   return (
     <div className="flex flex-col bg-gray-900 rounded-lg overflow-hidden">
-      <div className="p-3 border-b border-gray-800">
-        <h3 className="text-white font-medium">Alerta de Red Flag</h3>
-        <p className="text-white/60 text-sm">{prompt}</p>
+      <div className="bg-red-900/30 p-3 border-b border-red-900/50">
+        <div className="flex items-center">
+          <AlertTriangle className="h-5 w-5 text-red-500 mr-2" />
+          <h3 className="text-white font-medium">Red Flag Notification</h3>
+        </div>
+        <p className="text-white/60 text-sm mt-1">{prompt}</p>
       </div>
 
       {isGenerated ? (
         <div className="p-4">
-          <div
-            className={`bg-${getToxicityColor()}-500/20 border border-${getToxicityColor()}-500/40 rounded-lg p-4 mb-4`}
-          >
+          <div className="bg-black rounded-lg p-4 mb-4">
             <div className="flex items-center mb-3">
-              <div className={`bg-${getToxicityColor()}-500/30 p-2 rounded-full mr-3`}>
-                <AlertTriangle className={`h-5 w-5 text-${getToxicityColor()}-500`} />
-              </div>
+              <AlertTriangle className="h-5 w-5 text-red-500 mr-2" />
+              <span className="text-white font-medium">Red Flag Detectada</span>
+            </div>
+
+            <div className="border border-red-500/30 rounded-lg p-4 mb-3">
+              <p className="text-white text-lg">{redFlagText}</p>
+            </div>
+
+            <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-white font-medium">Alerta de Red Flag</h4>
-                <p className="text-white/60 text-xs">Nivel de toxicidad: {getToxicityLabel()}</p>
+                <span className="text-white/70 text-sm">Nivel de toxicidad:</span>
+                <span className={`ml-2 font-medium ${getToxicityColor()}`}>
+                  {getToxicityLabel()} ({toxicityLevel}/5)
+                </span>
               </div>
-              <div className="ml-auto">
-                <Bell className="h-5 w-5 text-white/60" />
+              <div className="flex space-x-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`w-2 h-6 rounded-sm ${i < toxicityLevel ? "bg-red-500" : "bg-gray-700"}`}
+                  ></div>
+                ))}
               </div>
-            </div>
-            <div className="bg-black/30 rounded p-3 mb-3">
-              <p className="text-white/90">{redFlagText}</p>
-            </div>
-            <div className="flex items-center justify-between text-xs text-white/60">
-              <span>Ahora</span>
-              <span>Swipe para ignorar</span>
             </div>
           </div>
-          <Button variant="outline" className="w-full border-gray-700 text-white">
-            <Share2 className="h-4 w-4 mr-2" />
-            Compartir Alerta
-          </Button>
+
+          <div className="flex space-x-2">
+            <Button variant="outline" className="flex-1 border-gray-700 text-white">
+              <Download className="h-4 w-4 mr-2" />
+              Guardar
+            </Button>
+            <Button variant="outline" className="flex-1 border-gray-700 text-white">
+              <Share2 className="h-4 w-4 mr-2" />
+              Compartir
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="p-4">
@@ -80,37 +107,30 @@ export function RedFlagNotification({ prompt = "Comparte una red flag", demoMode
             <Textarea
               value={redFlagText}
               onChange={(e) => setRedFlagText(e.target.value)}
-              placeholder="Escribe la red flag que quieres compartir..."
+              placeholder="Ej: Me dijo que todos sus ex están locos..."
               className="bg-gray-800 border-gray-700 text-white resize-none"
-              rows={4}
+              rows={3}
             />
           </div>
 
           <div className="mb-6">
             <label className="block text-white/70 text-sm mb-3">
-              Nivel de toxicidad: <span className="text-white font-medium">{getToxicityLabel()}</span>
+              Nivel de toxicidad: <span className={getToxicityColor()}>{getToxicityLabel()}</span>
             </label>
-            <Slider
-              value={toxicityLevel}
-              onValueChange={setToxicityLevel}
-              max={100}
-              step={1}
-              className={`text-${getToxicityColor()}-500`}
-            />
-            <div className="flex justify-between text-white/50 text-xs mt-1">
+            <Slider defaultValue={[3]} max={5} min={1} step={1} onValueChange={handleToxicityChange} className="mb-2" />
+            <div className="flex justify-between text-xs text-white/50">
               <span>Leve</span>
               <span>Moderada</span>
-              <span>Alta</span>
               <span>Extrema</span>
             </div>
           </div>
 
           <Button
-            onClick={handleGenerateRedFlag}
-            className={`w-full bg-gradient-to-r from-${getToxicityColor()}-500 to-${getToxicityColor()}-700 hover:opacity-90`}
+            onClick={handleGenerate}
+            className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:opacity-90"
             disabled={!redFlagText.trim()}
           >
-            Generar Alerta
+            Generar Red Flag
           </Button>
         </div>
       )}

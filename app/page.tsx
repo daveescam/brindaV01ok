@@ -1,152 +1,88 @@
-import { Button } from "@/components/ui/button"
-import { Sparkles, Wine, Briefcase, Heart } from "lucide-react"
 import Link from "next/link"
-import CardGenerator from "@/components/card-generator"
-import CardDisplay from "@/components/card-display"
-import { generateUnifiedCard } from "@/lib/types/unified-card"
+import { Button } from "@/components/ui/button"
 
 export default function Home() {
-  // Generate a sample card for the preview
-  const sampleCard = generateUnifiedCard({
-    challengeCategory: "confesion",
-    emotionalTier: "intense",
-    toneSubtype: "vulnerable",
-    interactionFormat: "voz_texto",
-  })
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-purple-950">
-      <header className="container mx-auto py-6 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-8 w-8 text-pink-500" />
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-yellow-500 text-transparent bg-clip-text">
-            Brinda X
-          </h1>
-        </div>
-        <nav className="hidden md:flex gap-6">
-          <Link href="/cards" className="text-white/80 hover:text-white transition">
-            Cápsulas
-          </Link>
-          <Link href="/generator" className="text-white/80 hover:text-white transition">
-            Generador
-          </Link>
-          <Link href="/dashboard" className="text-white/80 hover:text-white transition">
-            Dashboard
-          </Link>
-        </nav>
-        <Button asChild variant="outline" className="border-pink-500 text-white hover:bg-pink-500/20">
-          <Link href="/scan">Escanear QR</Link>
-        </Button>
-      </header>
-
-      <main className="container mx-auto py-12">
-        <section className="text-center mb-16">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-pink-500 via-purple-500 to-yellow-500 text-transparent bg-clip-text">
-            Ecosistema Viral de Caos Emocional
-          </h1>
-          <p className="text-xl text-white/80 max-w-3xl mx-auto mb-8">
-            Cada cápsula es un ritual que fusiona TikTok, Cards Against Humanity, 100 Mexicanos Dijeron y la Lotería
-            Mexicana en una experiencia única.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button asChild size="lg" className="bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90">
-              <Link href="/capsulas">Explorar Cápsulas</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="border-pink-500 text-white hover:bg-pink-500/20">
-              <Link href="/generator">Crear Cartas</Link>
-            </Button>
-          </div>
-        </section>
-
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-center text-white mb-8">Ejemplo de Carta</h2>
-          <div className="flex justify-center">
-            <div className="w-full max-w-md">
-              <CardDisplay card={sampleCard} />
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-1">
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                  Bienvenido a Brinda X
+                </h1>
+                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                  La plataforma de experiencias sociales que transforma tus salidas nocturnas
+                </p>
+              </div>
+              <div className="space-x-4">
+                <Button asChild size="lg">
+                  <Link href="/demo">Ver Demos</Link>
+                </Button>
+                <Button variant="outline" size="lg">
+                  <Link href="/como-funciona">Cómo Funciona</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </section>
-
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-center text-white mb-8">Generador de Cartas</h2>
-          <CardGenerator />
-        </section>
-
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="bg-black/40 border border-purple-500/50 backdrop-blur-sm rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <Wine className="h-10 w-10 text-pink-500" />
-              <h3 className="text-xl font-bold text-white">100 Borrachos Dijeron™</h3>
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800">
+          <div className="container px-4 md:px-6">
+            <div className="grid gap-6 lg:grid-cols-3 lg:gap-12">
+              <div className="flex flex-col justify-center space-y-4">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Desafíos Sociales</h2>
+                  <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+                    Participa en desafíos emocionantes diseñados para crear momentos memorables con tus amigos.
+                  </p>
+                </div>
+                <div>
+                  <Button variant="link" asChild className="p-0">
+                    <Link href="/demo/challenge-flow-basic">Probar Desafíos →</Link>
+                  </Button>
+                </div>
+              </div>
+              <div className="flex flex-col justify-center space-y-4">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Recompensas Exclusivas</h2>
+                  <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+                    Gana recompensas digitales y físicas que puedes canjear en tus bares y restaurantes favoritos.
+                  </p>
+                </div>
+                <div>
+                  <Button variant="link" asChild className="p-0">
+                    <Link href="/demo/wallet-basic">Ver Wallet →</Link>
+                  </Button>
+                </div>
+              </div>
+              <div className="flex flex-col justify-center space-y-4">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Plantillas AI</h2>
+                  <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+                    Crea contenido personalizado con nuestras plantillas impulsadas por inteligencia artificial.
+                  </p>
+                </div>
+                <div>
+                  <Button variant="link" asChild className="p-0">
+                    <Link href="/demo/plantillas-despecho">Explorar Plantillas →</Link>
+                  </Button>
+                </div>
+              </div>
             </div>
-            <p className="text-white/80 mb-4">
-              Honestidad ebria + Caos tragicómico. Confiesa lo que hiciste después del 5to mezcal y gana tu shot.
-            </p>
-            <Button asChild variant="secondary" className="w-full">
-              <Link href="/capsulas/borrachos">Explorar</Link>
-            </Button>
-          </div>
-
-          <div className="bg-black/40 border border-purple-500/50 backdrop-blur-sm rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <Briefcase className="h-10 w-10 text-blue-500" />
-              <h3 className="text-xl font-bold text-white">LinkedIn Caótico™</h3>
-            </div>
-            <p className="text-white/80 mb-4">
-              Cringe corporativo + Humor de oficina. ¿Orgulloso de anunciar... que vas a hacer el ridículo?
-            </p>
-            <Button asChild variant="secondary" className="w-full">
-              <Link href="/capsulas/linkedin">Explorar</Link>
-            </Button>
-          </div>
-
-          <div className="bg-black/40 border border-purple-500/50 backdrop-blur-sm rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <Heart className="h-10 w-10 text-red-500" />
-              <h3 className="text-xl font-bold text-white">Ritual Despecho™</h3>
-            </div>
-            <p className="text-white/80 mb-4">Dolor + Drama + Catarsis. Si cantas con el alma rota, la casa invita.</p>
-            <Button asChild variant="secondary" className="w-full">
-              <Link href="/capsulas/despecho">Explorar</Link>
-            </Button>
-          </div>
-        </section>
-
-        <section className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-white mb-8">¿Listo para el Caos Emocional?</h2>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button asChild size="lg" className="bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90">
-              <Link href="/scan">Escanear QR</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="border-pink-500 text-white hover:bg-pink-500/20">
-              <Link href="/cards">Ver Todas las Cápsulas</Link>
-            </Button>
           </div>
         </section>
       </main>
-
-      <footer className="bg-black/60 backdrop-blur-sm py-8">
-        <div className="container mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <Sparkles className="h-6 w-6 text-pink-500" />
-              <span className="text-white/90 font-semibold">Brinda X</span>
-            </div>
-            <div className="flex gap-6">
-              <Link href="/terms" className="text-white/60 hover:text-white transition text-sm">
-                Términos
-              </Link>
-              <Link href="/privacy" className="text-white/60 hover:text-white transition text-sm">
-                Privacidad
-              </Link>
-              <Link href="/contact" className="text-white/60 hover:text-white transition text-sm">
-                Contacto
-              </Link>
-            </div>
-          </div>
-          <div className="mt-6 text-center text-white/40 text-sm">
-            © {new Date().getFullYear()} Brinda X. Todos los derechos reservados.
-          </div>
-        </div>
+      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
+        <p className="text-xs text-gray-500 dark:text-gray-400">© 2023 Brinda X. Todos los derechos reservados.</p>
+        <nav className="sm:ml-auto flex gap-4 sm:gap-6">
+          <Link className="text-xs hover:underline underline-offset-4" href="/terminos">
+            Términos
+          </Link>
+          <Link className="text-xs hover:underline underline-offset-4" href="/privacidad">
+            Privacidad
+          </Link>
+        </nav>
       </footer>
     </div>
   )

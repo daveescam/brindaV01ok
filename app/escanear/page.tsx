@@ -76,13 +76,24 @@ export default function Escanear() {
 
   const handleError = (err: any) => {
     console.error("QR Scanner error:", err)
+    let errorMessage = "Error desconocido al escanear. Intenta de nuevo."
+
     if (typeof err === "string") {
-      setError(err)
+      errorMessage = err
     } else if (err && err.message) {
-      setError(err.message)
-    } else {
-      setError("Error desconocido al escanear. Intenta de nuevo.")
+      errorMessage = err.message
+
+      // Mensajes de error más amigables
+      if (errorMessage.includes("IndexSizeError") || errorMessage.includes("width is 0")) {
+        errorMessage = "Error al inicializar la cámara. Por favor, recarga la página e intenta de nuevo."
+      } else if (errorMessage.includes("Permission")) {
+        errorMessage = "Permiso de cámara denegado. Por favor, permite el acceso a la cámara."
+      }
     }
+
+    setError(errorMessage)
+    // Detener el escaneo si hay un error
+    setScanning(false)
   }
 
   const startScanning = () => {
